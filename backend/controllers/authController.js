@@ -94,3 +94,30 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ message: "Server error during login" });
   }
 };
+
+export const verifyUser = async (req, res) => {
+  const token = req.header("Authorization");
+  if (!token)
+    return res.status(401).json({ valid: false, message: "No token provided" });
+
+  try {
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(verified.id);
+    if (!user) {
+      return res.status(404).json({ valid: false, message: "User not found" });
+    }
+    res.json({
+      success: true,
+      data: {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          created_at: user.time,
+        },
+      },
+    });
+  } catch (err) {
+    res.status(401).json({ valid: false, message: "Invalid token" });
+  }
+};
