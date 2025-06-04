@@ -52,3 +52,45 @@ export const registerUser = async (req, res) => {
     res.status(500).json({ message: "Server error during registration" });
   }
 };
+
+export const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email" });
+    }
+
+    // Validate password
+
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      return res.status(400).json({ message: "Invalid  password" });
+    }
+
+    // Generate token
+    const token = jwt.sign(
+      { id: user._id, name: user.name, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      data: {
+        user: {
+          id: user._id,
+          email: email,
+          name: user.name,
+        },
+        token: token,
+      },
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Server error during login" });
+  }
+};
