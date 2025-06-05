@@ -140,3 +140,24 @@ export const updateSurvey = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+export const deleteSurvey = async (req, res) => {
+  try {
+    const deleted = await Survey.findOneAndDelete({
+      _id: req.params.id,
+      user_id: req.user.id,
+    });
+
+    if (!deleted) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Survey not found" });
+    }
+
+    res
+      .status(200)
+      .json({ success: true, message: "Survey deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
