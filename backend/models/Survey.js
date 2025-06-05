@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const SurveySchema = new mongoose.Schema(
   {
@@ -22,6 +23,14 @@ const SurveySchema = new mongoose.Schema(
     questions: {
       type: [Object],
       required: true,
+    },
+    responses: {
+      type: Number,
+      default: 0,
+    },
+    completionRate: {
+      type: Number,
+      default: 0,
     },
     published_at: {
       type: Date,
