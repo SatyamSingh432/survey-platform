@@ -116,3 +116,27 @@ export const getSurveyById = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+export const updateSurvey = async (req, res) => {
+  try {
+    const updated = await Survey.findOneAndUpdate(
+      { _id: req.params.id, user_id: req.user.id },
+      { ...req.body, updated_at: new Date() },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Survey not found or unauthorized" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Survey updated successfully",
+      data: updated,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
