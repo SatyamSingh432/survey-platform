@@ -6,6 +6,7 @@ import {
   getSurveyById,
   updateSurvey,
   deleteSurvey,
+  publishSurvey,
 } from "../controllers/surveyController.js";
 const router = express.Router();
 
@@ -14,4 +15,5 @@ router.get("/surveys", verifyToken, getAllSurveys);
 router.get("/surveys/:id", verifyToken, getSurveyById);
 router.put("/surveys/:id", verifyToken, updateSurvey);
 router.delete("/surveys/:id", verifyToken, deleteSurvey);
+router.post("/surveys/:id/publish", verifyToken, publishSurvey);
 export default router;
