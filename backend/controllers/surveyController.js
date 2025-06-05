@@ -97,3 +97,22 @@ export const getAllSurveys = async (req, res) => {
     });
   }
 };
+
+export const getSurveyById = async (req, res) => {
+  try {
+    const survey = await Survey.findOne({
+      _id: req.params.id,
+      user_id: req.user.id,
+    });
+
+    if (!survey) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Survey not found" });
+    }
+
+    res.status(200).json({ success: true, data: survey });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};

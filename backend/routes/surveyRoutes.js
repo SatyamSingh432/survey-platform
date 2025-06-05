@@ -1,9 +1,13 @@
 import express from "express";
-import { createSurvey } from "../controllers/surveyController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
-import { getAllSurveys } from "../controllers/surveyController.js";
+import {
+  createSurvey,
+  getAllSurveys,
+  getSurveyById,
+} from "../controllers/surveyController.js";
 const router = express.Router();
 
 router.post("/surveys", verifyToken, createSurvey);
 router.get("/surveys", verifyToken, getAllSurveys);
+router.get("/surveys/:id", verifyToken, getSurveyById);
 export default router;
