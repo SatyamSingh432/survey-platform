@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 
 import authRouter from "./routes/auth.js";
+import surveyRouter from "./routes/surveyRoutes.js";
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/v1/", authRouter);
+app.use("/api/v1", surveyRouter);
 
 mongoose
   .connect(process.env.MONGO_URL)
