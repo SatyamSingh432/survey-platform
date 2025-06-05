@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { useState } from "react"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 import {
   BarChart3,
   ClipboardCheck,
@@ -18,10 +18,10 @@ import {
   Bell,
   Search,
   HelpCircle,
-} from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+} from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,20 +29,40 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import HelpVideoModal from "@/components/help-video-modal"
+} from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
+
+import HelpVideoModal from "@/components/help-video-modal";
 
 export default function TopNavbar() {
-  const pathname = usePathname()
-  const [showMobileMenu, setShowMobileMenu] = useState(false)
-  const [showSearch, setShowSearch] = useState(false)
-  const [showHelpModal, setShowHelpModal] = useState(false)
+  const pathname = usePathname();
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [userName, setUserName] = useState<string>("");
+  const router = useRouter();
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        setUserName(user.name || "");
+      } catch {
+        setUserName("");
+      }
+    }
+  }, []);
 
   // Don't show navbar on login page
   if (pathname === "/login") {
-    return null
+    return null;
   }
-
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    router.push("/login");
+  };
   const navItems = [
     { href: "/", label: "My Survey Hub", icon: Home },
     { href: "/surveys", label: "My Surveys", icon: FileText },
@@ -51,7 +71,7 @@ export default function TopNavbar() {
     { href: "/analytics", label: "Analytics", icon: BarChart3 },
     { href: "/respondents", label: "Respondents", icon: Users },
     { href: "/settings", label: "Settings", icon: Settings },
-  ]
+  ];
 
   return (
     <>
@@ -59,7 +79,10 @@ export default function TopNavbar() {
         <div className="container flex h-16 items-center">
           <div className="flex items-center gap-2 mr-4">
             <ClipboardCheck className="h-6 w-6" />
-            <Link href="/" className="font-bold text-xl hidden md:inline-block text-foreground">
+            <Link
+              href="/"
+              className="font-bold text-xl hidden md:inline-block text-foreground"
+            >
               SurveyPro
             </Link>
           </div>
@@ -71,14 +94,18 @@ export default function TopNavbar() {
             className="md:hidden mr-2"
             onClick={() => setShowMobileMenu(!showMobileMenu)}
           >
-            {showMobileMenu ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {showMobileMenu ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
             <span className="sr-only">Toggle menu</span>
           </Button>
 
           {/* Desktop navigation */}
           <nav className="hidden md:flex items-center space-x-1 flex-1">
             {navItems.map((item) => {
-              const Icon = item.icon
+              const Icon = item.icon;
               return (
                 <Link
                   key={item.href}
@@ -93,7 +120,7 @@ export default function TopNavbar() {
                   <Icon className="h-4 w-4 mr-2" />
                   {item.label}
                 </Link>
-              )
+              );
             })}
           </nav>
 
@@ -102,7 +129,7 @@ export default function TopNavbar() {
             <div className="absolute top-16 left-0 right-0 bg-background border-b md:hidden z-50">
               <nav className="flex flex-col p-4 space-y-2">
                 {navItems.map((item) => {
-                  const Icon = item.icon
+                  const Icon = item.icon;
                   return (
                     <Link
                       key={item.href}
@@ -118,7 +145,7 @@ export default function TopNavbar() {
                       <Icon className="h-4 w-4 mr-2" />
                       {item.label}
                     </Link>
-                  )
+                  );
                 })}
               </nav>
             </div>
@@ -138,20 +165,34 @@ export default function TopNavbar() {
                 />
               </div>
             ) : (
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowSearch(true)}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setShowSearch(true)}
+              >
                 <Search className="h-4 w-4" />
                 <span className="sr-only">Search</span>
               </Button>
             )}
 
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowHelpModal(true)}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setShowHelpModal(true)}
+            >
               <HelpCircle className="h-4 w-4" />
               <span className="sr-only">Help</span>
             </Button>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative h-8 w-8">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="relative h-8 w-8"
+                >
                   <Bell className="h-4 w-4" />
                   <span className="sr-only">Notifications</span>
                   <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
@@ -162,8 +203,12 @@ export default function TopNavbar() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Notifications</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>New response to "Customer Satisfaction Survey"</DropdownMenuItem>
-                <DropdownMenuItem>Survey "Product Feedback" is trending</DropdownMenuItem>
+                <DropdownMenuItem>
+                  New response to "Customer Satisfaction Survey"
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  Survey "Product Feedback" is trending
+                </DropdownMenuItem>
                 <DropdownMenuItem>Weekly report is available</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -173,9 +218,13 @@ export default function TopNavbar() {
                 <Button variant="ghost" className="h-8 gap-2 pl-2">
                   <Avatar className="h-6 w-6">
                     <AvatarImage src="/placeholder-user.jpg" />
-                    <AvatarFallback>JD</AvatarFallback>
+                    <AvatarFallback>
+                      {userName?.charAt(0)?.toUpperCase() || "U"}
+                    </AvatarFallback>
                   </Avatar>
-                  <span className="hidden md:inline-block">John Doe</span>
+                  <span className="hidden md:inline-block">
+                    {userName || "User"}
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
@@ -185,7 +234,7 @@ export default function TopNavbar() {
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Settings</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>
@@ -197,5 +246,5 @@ export default function TopNavbar() {
 
       <HelpVideoModal open={showHelpModal} onOpenChange={setShowHelpModal} />
     </>
-  )
+  );
 }

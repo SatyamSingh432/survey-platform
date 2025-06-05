@@ -1,31 +1,101 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ChevronLeft, ClipboardCheck } from "lucide-react"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChevronLeft, ClipboardCheck } from "lucide-react";
 
 export default function LoginPage() {
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+  const [login, setLogin] = useState({
+    email: "",
+    password: "",
+  });
+  const [register, setRegister] = useState({
+    email: "",
+    name: "",
+    password: "",
+  });
 
-    // Simulate login process
-    setTimeout(() => {
-      setIsLoading(false)
-      router.push("/")
-    }, 1500)
-  }
+  const API = "http://localhost:8080/api/v1/";
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch(`${API}auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(login),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        localStorage.setItem("token", data.data.token);
+        localStorage.setItem("user", JSON.stringify(data.data.user));
+        router.push("/");
+      } else {
+        setError(data.message);
+      }
+    } catch (err: any) {
+      setError("Login failed. Please try again.");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch(`${API}auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(register),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        localStorage.setItem("token", data.data.token);
+        localStorage.setItem("user", JSON.stringify(data.data.user));
+        router.push("/");
+      } else {
+        setError(data.message);
+        console.error(data.message);
+      }
+    } catch (err: any) {
+      setError(err.message);
+      console.error(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="container flex h-screen w-screen flex-col items-center justify-center">
@@ -40,8 +110,12 @@ export default function LoginPage() {
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
         <div className="flex flex-col space-y-2 text-center">
           <ClipboardCheck className="mx-auto h-10 w-10" />
-          <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
-          <p className="text-sm text-muted-foreground">Sign in to your account to continue</p>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Welcome back
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Sign in to your account to continue
+          </p>
         </div>
 
         <Tabs defaultValue="login" className="w-full">
@@ -55,21 +129,53 @@ export default function LoginPage() {
               <form onSubmit={handleLogin}>
                 <CardHeader>
                   <CardTitle>Login</CardTitle>
-                  <CardDescription>Enter your email and password to access your account</CardDescription>
+                  <CardDescription>
+                    Enter your email and password to access your account
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="name@example.com" required />
+                    <Input
+                      id="email"
+                      type="email"
+                      name="email"
+                      value={login.email}
+                      placeholder="name@example.com"
+                      onChange={(e) => {
+                        const { name, value } = e.target;
+                        setLogin((prev) => ({
+                          ...prev,
+                          [name]: value,
+                        }));
+                      }}
+                      required
+                    />
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <Label htmlFor="password">Password</Label>
-                      <Link href="/forgot-password" className="text-xs text-muted-foreground hover:underline">
+                      <Link
+                        href="/forgot-password"
+                        className="text-xs text-muted-foreground hover:underline"
+                      >
                         Forgot password?
                       </Link>
                     </div>
-                    <Input id="password" type="password" required />
+                    <Input
+                      id="password"
+                      type="password"
+                      name="password"
+                      value={login.password}
+                      onChange={(e) => {
+                        const { name, value } = e.target;
+                        setLogin((prev) => ({
+                          ...prev,
+                          [name]: value,
+                        }));
+                      }}
+                      required
+                    />
                   </div>
                 </CardContent>
                 <CardFooter>
@@ -83,23 +189,66 @@ export default function LoginPage() {
 
           <TabsContent value="register">
             <Card>
-              <form onSubmit={handleLogin}>
+              <form onSubmit={handleRegister}>
                 <CardHeader>
                   <CardTitle>Create an account</CardTitle>
-                  <CardDescription>Enter your information to create an account</CardDescription>
+                  <CardDescription>
+                    Enter your information to create an account
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Name</Label>
-                    <Input id="name" placeholder="Your name" required />
+                    <Input
+                      id="name"
+                      placeholder="Your name"
+                      type="name"
+                      name="name"
+                      value={register.name}
+                      onChange={(e) => {
+                        const { name, value } = e.target;
+                        setRegister((prev) => ({
+                          ...prev,
+                          [name]: value,
+                        }));
+                      }}
+                      required
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="name@example.com" required />
+                    <Input
+                      id="email"
+                      type="email"
+                      name="email"
+                      value={register.email}
+                      placeholder="name@example.com"
+                      onChange={(e) => {
+                        const { name, value } = e.target;
+                        setRegister((prev) => ({
+                          ...prev,
+                          [name]: value,
+                        }));
+                      }}
+                      required
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="password">Password</Label>
-                    <Input id="password" type="password" required />
+                    <Input
+                      id="password"
+                      type="password"
+                      name="password"
+                      value={register.password}
+                      onChange={(e) => {
+                        const { name, value } = e.target;
+                        setRegister((prev) => ({
+                          ...prev,
+                          [name]: value,
+                        }));
+                      }}
+                      required
+                    />
                   </div>
                 </CardContent>
                 <CardFooter>
@@ -113,5 +262,5 @@ export default function LoginPage() {
         </Tabs>
       </div>
     </div>
-  )
+  );
 }
