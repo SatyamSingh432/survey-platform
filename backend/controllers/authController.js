@@ -23,13 +23,14 @@ export const registerUser = async (req, res) => {
       email: email,
       password: hashedPassword,
       name: name,
+      is_active: true,
     });
 
     await user.save();
 
     // Generate token
     const token = jwt.sign(
-      { id: user._id, username: user.username, email: user.email },
+      { id: user._id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
@@ -42,7 +43,7 @@ export const registerUser = async (req, res) => {
           id: user._id,
           email: email,
           name: user.name,
-          created_at: user.time,
+          created_at: user.created_at,
         },
         token: token,
       },
@@ -56,7 +57,7 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-
+    console.log(email, password);
     // Find user
     const user = await User.findOne({ email });
     if (!user) {
@@ -113,7 +114,7 @@ export const verifyUser = async (req, res) => {
           id: user.id,
           email: user.email,
           name: user.name,
-          created_at: user.time,
+          created_at: user.created_at,
         },
       },
     });

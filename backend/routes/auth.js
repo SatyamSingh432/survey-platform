@@ -4,10 +4,10 @@ import { loginUser } from "../controllers/authController.js";
 import { verifyUser } from "../controllers/authController.js";
 const router = express.Router();
 
-router.post("/register", registerUser);
+router.post("/auth/register", registerUser);
 
-router.post("/login", loginUser);
+router.post("/auth/login", loginUser);
 
-router.get("/verify", verifyUser);
+router.get("/auth/verify", verifyUser);
 
 export default router;
