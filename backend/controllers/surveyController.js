@@ -39,3 +39,61 @@ export const createSurvey = async (req, res) => {
     return res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
+export const getAllSurveys = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    const userId = req.user.id;
+    const status = req.query.status; // get status from query
+
+    // Build query object
+    const query = { user_id: userId };
+    if (status) {
+      query.status = status;
+    }
+
+    // Total count for pagination
+    const totalItems = await Survey.countDocuments(query);
+
+    // Fetch filtered surveys
+    const surveys = await Survey.find(query)
+      .sort({ created_at: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // Format surveys
+    const formattedSurveys = surveys.map((survey) => ({
+      id: survey._id,
+      title: survey.title,
+      description: survey.description,
+      status: survey.status,
+      questions_count: survey.questions.length,
+      responses_count: 0,
+      created_at: survey.created_at.toISOString(),
+      updated_at: survey.updated_at.toISOString(),
+    }));
+
+    // Return response
+    res.status(200).json({
+      success: true,
+      data: {
+        surveys: formattedSurveys,
+        pagination: {
+          current_page: page,
+          total_pages: Math.ceil(totalItems / limit),
+          total_items: totalItems,
+          items_per_page: limit,
+        },
+      },
+    });
+  } catch (err) {
+    console.error("Error in getAllSurveys:", err);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
