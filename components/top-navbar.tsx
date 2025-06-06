@@ -33,6 +33,7 @@ import {
 import { useRouter } from "next/navigation";
 
 import HelpVideoModal from "@/components/help-video-modal";
+import LoginPage from "@/app/login/page";
 
 export default function TopNavbar() {
   const pathname = usePathname();
@@ -53,7 +54,6 @@ export default function TopNavbar() {
       }
     }
   }, []);
-
   // Don't show navbar on login page
   if (pathname === "/login") {
     return null;
@@ -61,6 +61,9 @@ export default function TopNavbar() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    router.push("/login");
+  };
+  const LoginPageHandler = () => {
     router.push("/login");
   };
   const navItems = [
@@ -212,34 +215,37 @@ export default function TopNavbar() {
                 <DropdownMenuItem>Weekly report is available</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 gap-2 pl-2">
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src="/placeholder-user.jpg" />
-                    <AvatarFallback>
-                      {userName?.charAt(0)?.toUpperCase() || "U"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="hidden md:inline-block">
-                    {userName || "User"}
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {userName ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="h-8 gap-2 pl-2">
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src="/placeholder-user.jpg" />
+                      <AvatarFallback>
+                        {userName?.charAt(0)?.toUpperCase() || "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="hidden md:inline-block">
+                      {userName || "User"}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button onClick={LoginPageHandler}>Login/Reg</Button>
+            )}
           </div>
         </div>
       </header>
