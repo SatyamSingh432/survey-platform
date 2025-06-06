@@ -76,6 +76,10 @@ Survey Platform is a web application designed to create, manage, and analyze sur
 
 ## API Endpoints
 
+ALL my survey are saved on
+email-saurav@1234
+password-1234
+
 ### Authentication
 
 - **Register User**
