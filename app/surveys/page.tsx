@@ -39,6 +39,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { API_URL } from "@/lib/api";
 
 interface Survey {
   id: string;
@@ -71,7 +72,7 @@ export default function MySurveysPage() {
   const fetchSurveys = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/api/v1/surveys", {
+      const response = await fetch(`${API_URL}surveys`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

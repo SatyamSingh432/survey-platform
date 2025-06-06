@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronLeft, ClipboardCheck } from "lucide-react";
+import { API_URL } from "@/lib/api";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,15 +35,13 @@ export default function LoginPage() {
     password: "",
   });
 
-  const API = "http://localhost:8080/api/v1/";
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
     try {
-      const response = await fetch(`${API}auth/login`, {
+      const response = await fetch(`${API_URL}auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -73,7 +72,7 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const response = await fetch(`${API}auth/register`, {
+      const response = await fetch(`${API_URL}auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(register),

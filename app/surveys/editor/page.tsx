@@ -68,6 +68,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter, useSearchParams } from "next/navigation";
+import { API_URL } from "@/lib/api";
 
 export default function SurveyEditorPage() {
   const searchParams = useSearchParams();
@@ -205,7 +206,7 @@ export default function SurveyEditorPage() {
   const handlePublish = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/api/v1/surveys", {
+      const response = await fetch(`${API_URL}surveys`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -222,15 +223,12 @@ export default function SurveyEditorPage() {
       console.log(data);
       if (data.success) {
         // Publish the survey
-        await fetch(
-          `http://localhost:8080/api/v1/surveys/${data.data.survey.id}/publish`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        await fetch(`${API_URL}surveys/${data.data.survey.id}/publish`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         toast({
           title: "Survey Published!",
