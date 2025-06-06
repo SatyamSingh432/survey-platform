@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { type } from "os";
 
 const SurveySchema = new mongoose.Schema(
   {
