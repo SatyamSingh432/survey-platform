@@ -1,3 +1,7 @@
+ALL my surveys are saved in user email-saurav@1234 password-1234
+i complete all my routes for authentication , surveys , surveyresponses , respondant
+i done interation of login , register , get all surveys list , create survey, publish Survey , delete survey , filter survey by category
+
 <--------------------------------------------AUTHENTICATION------------------------------------------------------>
 STEP-1
 
