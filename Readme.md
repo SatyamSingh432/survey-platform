@@ -1,5 +1,28 @@
-<--------------------------------------------SURVEY------------------------------------------------------>
+<--------------------------------------------AUTHENTICATION------------------------------------------------------>
+STEP-1
 
+<!-- STEP-1 REGISTER -->
+
+         POST http://localhost:8080/api/v1/auth/register
+         IN BODY
+         {
+              "email":"xyz@1234",
+              "name":"xyz",
+              "password":"1234"
+          }
+
+STEP-2
+
+<!-- STEP-2 LOGIN -->
+
+          POST http://localhost:8080/api/v1/auth/login
+           IN BODY
+             {
+                 "email":"xyz@1234",
+                 "password":"1234"
+             }
+
+<--------------------------------------------SURVEY------------------------------------------------------>
 STEP---1
 
 <!-- STEP--1---first login(from postmon) -->
@@ -114,7 +137,6 @@ STEP-7
                          IN HEADER (TOKEN)
 
                         Authorization : Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.                eyJpZCI6IjY4NDA4NTA3ZGZiNzZlODc5OTMxMTJlZiIsIm5hbWUiOiJzYXVyYXYiLCJlbWFpbCI6InNhdXJhdkAxMjM0IiwiaWF0IjoxNzQ5MDk5NTY2LCJleHAiOjE3NDkxODU5NjZ9.DKyewrx_qqVj-xJc-nZjydIG-MiWN2iQLOEPojwDLa4
-
 
 <--------------------------------------------SURVEY RESPONSES------------------------------------------------------>
 

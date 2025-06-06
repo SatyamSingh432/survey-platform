@@ -8,6 +8,6 @@ router.post("/auth/register", registerUser);
 
 router.post("/auth/login", loginUser);
 
-router.get("/auth/verify", verifyUser);
+router.get("/auth/me", verifyUser);
 
 export default router;
