@@ -22,6 +22,7 @@ export const getPublicSurveys = async (req, res) => {
     const formattedSurveys = surveys.map((survey) => ({
       id: survey._id,
       title: survey.title,
+      status: survey.status,
       description: survey.description,
       questions: survey.questions,
     }));
